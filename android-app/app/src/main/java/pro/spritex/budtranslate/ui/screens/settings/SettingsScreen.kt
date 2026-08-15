@@ -100,7 +100,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Primary Target Language",
                                 style = BudTheme.typography.bodyMdStrong,
@@ -113,6 +113,7 @@ fun SettingsScreen(
                                 color = BudTheme.colors.Mute
                             )
                         }
+                        Spacer(modifier = Modifier.width(BudTheme.spacing.md))
                         Text(
                             text = "Bengali",
                             style = BudTheme.typography.bodyMdStrong,
