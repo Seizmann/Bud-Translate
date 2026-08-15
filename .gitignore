@@ -27,6 +27,7 @@ venv/
 local.properties
 *.jks
 *.keystore
+!android-app/app/debug.keystore
 
 # Editors / OS
 .idea/
