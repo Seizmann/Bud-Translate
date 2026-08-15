@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -27,7 +28,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -71,36 +71,6 @@ fun EarbudContent() {
             .fillMaxSize()
             .background(BudTheme.colors.CanvasSoft)
     ) {
-        // Dark hero band
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = BudTheme.colors.Ink,
-            contentColor = BudTheme.colors.Primary
-        ) {
-            Column(modifier = Modifier.padding(BudTheme.spacing.xl)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Hearing,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp),
-                        tint = BudTheme.colors.Primary
-                    )
-                    Spacer(modifier = Modifier.width(BudTheme.spacing.md))
-                    Text(
-                        text = "Earbud Mode",
-                        style = BudTheme.typography.displayXs,
-                        color = BudTheme.colors.Primary
-                    )
-                }
-                Spacer(modifier = Modifier.height(BudTheme.spacing.sm))
-                Text(
-                    text = "Put on your buds. The app translates ambient talk directly to your ears.",
-                    style = BudTheme.typography.bodySm,
-                    color = BudTheme.colors.CanvasSoft
-                )
-            }
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()

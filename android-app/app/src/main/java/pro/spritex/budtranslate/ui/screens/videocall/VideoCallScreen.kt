@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material.icons.filled.FlipCameraAndroid
@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.MicOff
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,25 +32,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import pro.spritex.budtranslate.data.fake.FakeRepositories
 import pro.spritex.budtranslate.ui.components.BudCircularIconButton
-import pro.spritex.budtranslate.ui.components.PositiveBadge
 import pro.spritex.budtranslate.ui.theme.BudTheme
+
+private val DarkBg = Color(0xFF1A1C18)
+private val ButtonBg = Color(0xFF2C2F27)
+private val OverlayBg = Color(0xCC000000)
 
 @Composable
 fun VideoCallScreen(
     contactId: String,
     onBackClick: () -> Unit
 ) {
-    val contact = FakeRepositories.contacts.firstOrNull { it.id == contactId } ?: FakeRepositories.contacts.first()
+    val contact = FakeRepositories.contacts.firstOrNull { it.id == contactId }
+        ?: FakeRepositories.contacts.first()
     var isMuted by remember { mutableStateOf(false) }
     var isVideoOff by remember { mutableStateOf(false) }
 
-    // Simulating subtitles
     var currentSubtitle by remember { mutableStateOf("Initialising stable translation room...") }
-
     LaunchedEffect(Unit) {
         delay(3000)
         currentSubtitle = "Hello! Sijan has set up the video node properly."
@@ -66,9 +69,9 @@ fun VideoCallScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BudTheme.colors.Ink)
+            .background(DarkBg)
     ) {
-        // Viewfinder Placeholder (Remote Video Feed representation)
+        // Remote video viewfinder (full background)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -79,17 +82,17 @@ fun VideoCallScreen(
                         imageVector = Icons.Default.VideocamOff,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
-                        tint = BudTheme.colors.Mute
+                        tint = Color.White.copy(alpha = 0.4f)
                     )
                     Spacer(modifier = Modifier.height(BudTheme.spacing.md))
                     Text(
-                        text = "Camera is feed off",
+                        text = "Camera is off",
                         style = BudTheme.typography.bodyMd,
-                        color = BudTheme.colors.Mute
+                        color = Color.White.copy(alpha = 0.5f)
                     )
                 }
             } else {
-                // Colored canvas showing user avatar & design details representing video
+                // Placeholder for remote video — avatar centered
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -97,59 +100,49 @@ fun VideoCallScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(160.dp)
-                            .clip(BudTheme.shapes.xl)
-                            .background(BudTheme.colors.PrimaryNeutral),
+                            .size(140.dp)
+                            .clip(CircleShape)
+                            .background(BudTheme.colors.Primary),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = contact.name.take(1),
-                            style = BudTheme.typography.displayMega.copy(fontSize = 72.dp.value.sp), // Safe fontSize casting
-                            color = BudTheme.colors.InkDeep
+                            fontSize = 64.sp,
+                            color = Color(0xFF1A1C18)
                         )
                     }
                     Spacer(modifier = Modifier.height(BudTheme.spacing.lg))
                     Text(
-                        text = "Live video from ${contact.name}",
+                        text = contact.name,
                         style = BudTheme.typography.bodyMdStrong,
-                        color = BudTheme.colors.Primary
+                        color = Color.White.copy(alpha = 0.8f)
                     )
                 }
             }
         }
 
-        // Subtitles Overlay Card (Translucent floating card at bottom center)
+        // Top-left status badge
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 120.dp, start = BudTheme.spacing.xl, end = BudTheme.spacing.xl),
-            contentAlignment = Alignment.BottomCenter
+                .padding(BudTheme.spacing.xl),
+            contentAlignment = Alignment.TopStart
         ) {
-            Surface(
-                color = BudTheme.colors.Ink.copy(alpha = 0.85f),
-                contentColor = BudTheme.colors.Primary,
-                shape = BudTheme.shapes.lg,
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .clip(BudTheme.shapes.full)
+                    .background(OverlayBg)
+                    .padding(horizontal = BudTheme.spacing.md, vertical = BudTheme.spacing.xs)
             ) {
-                Column(
-                    modifier = Modifier.padding(BudTheme.spacing.lg),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    PositiveBadge(
-                        text = "Bud Subtitle (Live)",
-                        modifier = Modifier.padding(bottom = BudTheme.spacing.xs)
-                    )
-                    Text(
-                        text = currentSubtitle,
-                        style = BudTheme.typography.bodyMdStrong,
-                        color = Color.White,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                }
+                Text(
+                    text = "HD · Translating",
+                    style = BudTheme.typography.caption,
+                    color = BudTheme.colors.Primary
+                )
             }
         }
 
-        // PiP Self Video Placeholder (Top-Right overlay)
+        // PiP self-view (top-right)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -160,33 +153,47 @@ fun VideoCallScreen(
                 modifier = Modifier
                     .size(90.dp, 130.dp)
                     .clip(BudTheme.shapes.md)
-                    .background(BudTheme.colors.InkDeep)
+                    .background(ButtonBg)
                     .border(2.dp, BudTheme.colors.Primary, BudTheme.shapes.md),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "You",
                     style = BudTheme.typography.bodySmStrong,
-                    color = BudTheme.colors.Primary
+                    color = Color.White
                 )
             }
         }
 
-        // Top-Left Status Indicators
+        // Subtitle overlay
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(BudTheme.spacing.xl),
-            contentAlignment = Alignment.TopStart
+                .padding(bottom = 110.dp, start = BudTheme.spacing.xl, end = BudTheme.spacing.xl),
+            contentAlignment = Alignment.BottomCenter
         ) {
-            PositiveBadge("HD Calling · Translating")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(BudTheme.shapes.lg)
+                    .background(OverlayBg)
+                    .padding(BudTheme.spacing.md)
+            ) {
+                Text(
+                    text = currentSubtitle,
+                    style = BudTheme.typography.bodyMdStrong,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
-        // Bottom Controls Overlay Strip
+        // Bottom controls
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = BudTheme.spacing.lg),
+                .padding(bottom = BudTheme.spacing.xl),
             contentAlignment = Alignment.BottomCenter
         ) {
             Row(
@@ -196,57 +203,73 @@ fun VideoCallScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                BudCircularIconButton(
+                VideoCallButton(
                     onClick = { isMuted = !isMuted },
-                    backgroundColor = if (isMuted) BudTheme.colors.NegativeBg else BudTheme.colors.InkDeep,
-                    contentColor = if (isMuted) BudTheme.colors.Negative else BudTheme.colors.Primary
-                ) {
-                    Icon(
-                        imageVector = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
-                        contentDescription = "Mute Toggle",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                BudCircularIconButton(
+                    bg = if (isMuted) Color(0xFF3D1A1A) else ButtonBg,
+                    icon = {
+                        Icon(
+                            imageVector = if (isMuted) Icons.Default.MicOff else Icons.Default.Mic,
+                            contentDescription = "Mute",
+                            tint = if (isMuted) BudTheme.colors.Negative else Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                )
+                VideoCallButton(
                     onClick = { isVideoOff = !isVideoOff },
-                    backgroundColor = if (isVideoOff) BudTheme.colors.NegativeBg else BudTheme.colors.InkDeep,
-                    contentColor = if (isVideoOff) BudTheme.colors.Negative else BudTheme.colors.Primary
-                ) {
-                    Icon(
-                        imageVector = if (isVideoOff) Icons.Default.VideocamOff else Icons.Default.Videocam,
-                        contentDescription = "Video Feed Toggle",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                BudCircularIconButton(
-                    onClick = { /* camera flip */ },
-                    backgroundColor = BudTheme.colors.InkDeep,
-                    contentColor = BudTheme.colors.Primary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.FlipCameraAndroid,
-                        contentDescription = "Flip Camera",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                BudCircularIconButton(
+                    bg = if (isVideoOff) Color(0xFF3D1A1A) else ButtonBg,
+                    icon = {
+                        Icon(
+                            imageVector = if (isVideoOff) Icons.Default.VideocamOff else Icons.Default.Videocam,
+                            contentDescription = "Video",
+                            tint = if (isVideoOff) BudTheme.colors.Negative else Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                )
+                VideoCallButton(
+                    onClick = {},
+                    bg = ButtonBg,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.FlipCameraAndroid,
+                            contentDescription = "Flip camera",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                )
+                VideoCallButton(
                     onClick = onBackClick,
-                    backgroundColor = BudTheme.colors.Negative,
-                    contentColor = Color.White
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CallEnd,
-                        contentDescription = "Hang Up / Exit",
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                    bg = BudTheme.colors.Negative,
+                    size = 64.dp,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.CallEnd,
+                            contentDescription = "Hang up",
+                            tint = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                )
             }
         }
     }
 }
-// Safe casting helper for sp font size
-private val Float.sp: androidx.compose.ui.unit.TextUnit
-    get() = androidx.compose.ui.unit.TextUnit(this, androidx.compose.ui.unit.TextUnitType.Sp)
+
+@Composable
+private fun VideoCallButton(
+    onClick: () -> Unit,
+    bg: Color,
+    size: androidx.compose.ui.unit.Dp = 56.dp,
+    icon: @Composable () -> Unit
+) {
+    BudCircularIconButton(
+        onClick = onClick,
+        modifier = Modifier.size(size),
+        backgroundColor = bg,
+        contentColor = Color.White
+    ) {
+        icon()
+    }
+}
