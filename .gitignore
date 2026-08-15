@@ -1,0 +1,45 @@
+# Local-only secrets — MUST stay ignored, see docs/SECURITY.md
+docs/SECRETS.md
+.env
+.env.*
+!.env.example
+
+# Build output
+bin/
+build/
+dist/
+*.apk
+*.aab
+
+# Go
+vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Android
+.gradle/
+local.properties
+*.jks
+*.keystore
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Documentation & Guidelines
+AGENT.md
+Bud_Translate_PRD.md
+CLAUDE.md
+DEBUG.md
+PROGRESS.md
+README.md
+ROADMAP.md
+TEST.md
+docs/
