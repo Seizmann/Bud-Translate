@@ -10,6 +10,7 @@ build/
 dist/
 *.apk
 *.aab
+stitch_bud_translate_android_app_ui.zip
 
 # Go
 vendor/

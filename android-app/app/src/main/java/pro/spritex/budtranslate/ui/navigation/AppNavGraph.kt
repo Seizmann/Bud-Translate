@@ -1,6 +1,10 @@
 package pro.spritex.budtranslate.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,7 +16,9 @@ import pro.spritex.budtranslate.ui.screens.camera.CameraScreen
 import pro.spritex.budtranslate.ui.screens.chat.ChatScreen
 import pro.spritex.budtranslate.ui.screens.earbud.EarbudScreen
 import pro.spritex.budtranslate.ui.screens.home.HomeScreen
+import pro.spritex.budtranslate.ui.screens.profile.ProfileScreen
 import pro.spritex.budtranslate.ui.screens.settings.SettingsScreen
+import pro.spritex.budtranslate.ui.screens.splash.SplashScreen
 import pro.spritex.budtranslate.ui.screens.text.TextScreen
 import pro.spritex.budtranslate.ui.screens.videocall.VideoCallScreen
 
@@ -25,12 +31,22 @@ fun AppNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "splash"
     ) {
+        composable("splash") {
+            SplashScreen(onReady = {
+                navController.navigate("home") {
+                    popUpTo("splash") { inclusive = true }
+                }
+            })
+        }
+
         composable("home") {
-            HomeScreen(
-                onNavigate = { route -> navController.navigate(route) }
-            )
+            HomeScreen(onNavigate = { route -> navController.navigate(route) })
+        }
+
+        composable("profile") {
+            ProfileScreen(onBackClick = { navController.popBackStack() })
         }
 
         composable("earbud") {

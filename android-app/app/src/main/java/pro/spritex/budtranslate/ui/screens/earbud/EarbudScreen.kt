@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,21 +44,17 @@ import pro.spritex.budtranslate.ui.components.BudTopBar
 import pro.spritex.budtranslate.ui.components.LanguageChip
 import pro.spritex.budtranslate.ui.theme.BudTheme
 
+private val liveTranscript = listOf(
+    "Hello, how can we start today?" to "হ্যালো, আমরা আজ কীভাবে শুরু করতে পারি?",
+    "I was thinking about reviewing the PRD details." to "আমি PRD বিবরণ পর্যালোচনা করার কথা ভাবছিলাম।",
+    "Excellent. Mohammad Sijan approved the mock system." to "চমৎকার। মোহাম্মদ সিজান মক সিস্টেম অনুমোদন করেছেন।"
+)
+
+// Embedded in HomeScreen Earbud tab — no top bar
 @Composable
-fun EarbudScreen(
-    onBackClick: () -> Unit
-) {
+fun EarbudContent() {
     var isActive by remember { mutableStateOf(false) }
-    var sourceLang by remember { mutableStateOf("English") }
-    var targetLang by remember { mutableStateOf("Bengali") }
 
-    val liveTranscript = listOf(
-        "Hello, how can we start today?" to "হ্যালো, আমরা আজ কীভাবে শুরু করতে পারি?",
-        "I was thinking about reviewing the PRD details." to "আমি PRD বিবরণ পর্যালোচনা করার কথা ভাবছিলাম।",
-        "Excellent. Mohammad Sijan approved the mock system." to "চমৎকার। মোহাম্মদ সিজান মক সিস্টেম অনুমোদন করেছেন।"
-    )
-
-    // Animated waveform placeholder
     val infiniteTransition = rememberInfiniteTransition(label = "wave")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 0.9f,
@@ -71,151 +66,147 @@ fun EarbudScreen(
         label = "pulse"
     )
 
-    Scaffold(
-        topBar = {
-            BudTopBar(title = "Earbud Mode", onBackClick = onBackClick)
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BudTheme.colors.CanvasSoft)
-                .padding(paddingValues)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BudTheme.colors.CanvasSoft)
+    ) {
+        // Dark hero band
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = BudTheme.colors.Ink,
+            contentColor = BudTheme.colors.Primary
         ) {
-            // Dark promote hero block
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = BudTheme.colors.Ink,
-                contentColor = BudTheme.colors.Primary
-            ) {
-                Column(
-                    modifier = Modifier.padding(BudTheme.spacing.xl)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Hearing,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = BudTheme.colors.Primary
-                        )
-                        Spacer(modifier = Modifier.width(BudTheme.spacing.md))
-                        Text(
-                            text = "Bud Earbud Mode",
-                            style = BudTheme.typography.displayXs,
-                            color = BudTheme.colors.Primary
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(BudTheme.spacing.sm))
-                    Text(
-                        text = "Put on your buds. The app translates ambient talk directly to your ears in real-time.",
-                        style = BudTheme.typography.bodySm,
-                        color = BudTheme.colors.CanvasSoft
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(BudTheme.spacing.xl),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Language Selection Row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    LanguageChip(language = sourceLang)
-                    Spacer(modifier = Modifier.width(BudTheme.spacing.md))
-                    Text("→", style = BudTheme.typography.bodyMdStrong)
-                    Spacer(modifier = Modifier.width(BudTheme.spacing.md))
-                    LanguageChip(language = targetLang)
-                }
-
-                Spacer(modifier = Modifier.height(BudTheme.spacing.xl))
-
-                // Waveform pulse / mic circle
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .scale(if (isActive) pulseScale else 1.0f)
-                        .background(
-                            color = if (isActive) BudTheme.colors.Primary else BudTheme.colors.Canvas,
-                            shape = BudTheme.shapes.full
-                        )
-                ) {
+            Column(modifier = Modifier.padding(BudTheme.spacing.xl)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Hearing,
-                        contentDescription = "Microphone Status",
-                        modifier = Modifier.size(40.dp),
-                        tint = if (isActive) BudTheme.colors.OnPrimary else BudTheme.colors.Ink
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = BudTheme.colors.Primary
+                    )
+                    Spacer(modifier = Modifier.width(BudTheme.spacing.md))
+                    Text(
+                        text = "Earbud Mode",
+                        style = BudTheme.typography.displayXs,
+                        color = BudTheme.colors.Primary
                     )
                 }
-
-                Spacer(modifier = Modifier.height(BudTheme.spacing.xl))
-
-                // Active / Inactive Button Action
-                BudButton(
-                    onClick = { isActive = !isActive },
-                    modifier = Modifier.width(200.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isActive) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(BudTheme.spacing.sm))
-                    Text(text = if (isActive) "Stop Translation" else "Start Listening")
-                }
-
-                Spacer(modifier = Modifier.height(BudTheme.spacing.xl))
-
-                // Subtitle/Transcription Box
+                Spacer(modifier = Modifier.height(BudTheme.spacing.sm))
                 Text(
-                    text = "Live Transcription",
-                    style = BudTheme.typography.bodySmStrong,
-                    color = BudTheme.colors.Body,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(bottom = BudTheme.spacing.sm)
+                    text = "Put on your buds. The app translates ambient talk directly to your ears.",
+                    style = BudTheme.typography.bodySm,
+                    color = BudTheme.colors.CanvasSoft
                 )
+            }
+        }
 
-                BudCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    if (isActive) {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(BudTheme.spacing.md)
-                        ) {
-                            items(liveTranscript) { (orig, trans) ->
-                                Column {
-                                    Text(text = orig, style = BudTheme.typography.bodySm, color = BudTheme.colors.Body)
-                                    Spacer(modifier = Modifier.height(BudTheme.spacing.xxs))
-                                    Text(text = trans, style = BudTheme.typography.bodyMdStrong, color = BudTheme.colors.Ink)
-                                    Spacer(modifier = Modifier.height(BudTheme.spacing.sm))
-                                    HorizontalDivider(color = BudTheme.colors.CanvasSoft)
-                                }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(BudTheme.spacing.xl),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LanguageChip(language = "English")
+                Spacer(modifier = Modifier.width(BudTheme.spacing.md))
+                Text("→", style = BudTheme.typography.bodyMdStrong)
+                Spacer(modifier = Modifier.width(BudTheme.spacing.md))
+                LanguageChip(language = "Bengali")
+            }
+
+            Spacer(modifier = Modifier.height(BudTheme.spacing.xl))
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(100.dp)
+                    .scale(if (isActive) pulseScale else 1.0f)
+                    .background(
+                        color = if (isActive) BudTheme.colors.Primary else BudTheme.colors.Canvas,
+                        shape = BudTheme.shapes.full
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Hearing,
+                    contentDescription = "Microphone Status",
+                    modifier = Modifier.size(40.dp),
+                    tint = if (isActive) BudTheme.colors.OnPrimary else BudTheme.colors.Ink
+                )
+            }
+
+            Spacer(modifier = Modifier.height(BudTheme.spacing.xl))
+
+            BudButton(
+                onClick = { isActive = !isActive },
+                modifier = Modifier.width(200.dp)
+            ) {
+                Icon(
+                    imageVector = if (isActive) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(BudTheme.spacing.sm))
+                Text(text = if (isActive) "Stop Translation" else "Start Listening")
+            }
+
+            Spacer(modifier = Modifier.height(BudTheme.spacing.xl))
+
+            Text(
+                text = "Live Transcription",
+                style = BudTheme.typography.bodySmStrong,
+                color = BudTheme.colors.Body,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(bottom = BudTheme.spacing.sm)
+            )
+
+            BudCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                if (isActive) {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(BudTheme.spacing.md)) {
+                        items(liveTranscript) { (orig, trans) ->
+                            Column {
+                                Text(text = orig, style = BudTheme.typography.bodySm, color = BudTheme.colors.Body)
+                                Spacer(modifier = Modifier.height(BudTheme.spacing.xxs))
+                                Text(text = trans, style = BudTheme.typography.bodyMdStrong, color = BudTheme.colors.Ink)
+                                Spacer(modifier = Modifier.height(BudTheme.spacing.sm))
+                                HorizontalDivider(color = BudTheme.colors.CanvasSoft)
                             }
                         }
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                "Hit Start Listening to stream translations",
-                                style = BudTheme.typography.bodySm,
-                                color = BudTheme.colors.Mute
-                            )
-                        }
+                    }
+                } else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            "Hit Start Listening to stream translations",
+                            style = BudTheme.typography.bodySm,
+                            color = BudTheme.colors.Mute
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+// Standalone screen (kept for deep-link / back-stack use)
+@Composable
+fun EarbudScreen(onBackClick: () -> Unit) {
+    Scaffold(
+        topBar = { BudTopBar(title = "Earbud Mode", onBackClick = onBackClick) }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            EarbudContent()
         }
     }
 }
